@@ -131,7 +131,7 @@
 
 <script>
 /* ====== AYARLAR ====== */
-const RECIPIENT = "senaselcuk71@gmail.com";
+const RECIPIENT = "c56e2fc23971778ee205eefeaff64696";   // FormSubmit rastgele alias (e-posta adresi gizli)
 const ENDPOINT  = "https://formsubmit.co/ajax/" + RECIPIENT;
 const SUBJECT   = "Anket verisi: Kilo ve Beden Algısı";
 const FIG_SRC   = n => `figures/${n}.png`;   // silüet görselleri: figures/1.png … figures/9.png
@@ -258,14 +258,19 @@ function showQ(){
   el.style.display=n?"block":"none";
   el.textContent=n?`Bu cihazda gönderilmeyi bekleyen ${n} kayıt var. İnternet bağlantısı gelince otomatik gönderilecek.`:"";
 }
-let flushing=false;
+let flushing=false, holdUntil=0;
 async function flushQ(){
-  if(flushing||!navigator.onLine) return;
+  if(flushing||!navigator.onLine||Date.now()<holdUntil) return;
   flushing=true;
   try{
     let q=loadQ();
     while(q.length){
-      try{ await sendRecord(q[0]); }catch(e){ break; }   // hâlâ gönderilemiyorsa sonra tekrar dene
+      try{ await sendRecord(q[0]); }
+      catch(e){
+        // Ağ hatası değilse (ör. sunucu reddi / aktivasyon bekliyor) her dakika denemeyip 15 dk bekle
+        if(!(e instanceof TypeError)) holdUntil=Date.now()+15*60*1000;
+        break;
+      }
       q=loadQ(); q.shift(); saveQ(q); showQ();
     }
   }finally{ flushing=false; showQ(); }
