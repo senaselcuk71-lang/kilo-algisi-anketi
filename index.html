@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kilo ve Beden Büyüklüğü Algısı Anketi</title>
+<style>
+  :root{--blue:#2c5d8a;--blue-d:#1f4468;--accent:#3e9fcc;--bg:#e9edf1;--line:#d5dbe1;--err:#c0392b;--ok:#2e7d32}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:#2b2f33}
+  header{background:var(--blue);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+  header .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+  header .logo{width:30px;height:30px;border-radius:6px;background:#fff;color:var(--blue);display:grid;place-items:center;font-weight:800}
+  header select{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:4px;padding:4px 8px;font-size:13px}
+  header select option{color:#000}
+  main{max-width:760px;margin:0 auto;padding:16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:22px 22px 8px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  h1{font-size:19px;line-height:1.35;margin:0 0 6px;color:var(--blue-d)}
+  .desc{font-size:14px;color:#555;margin:0 0 16px}
+  .progress{height:6px;background:#dde3e9;border-radius:3px;margin:0 0 16px;overflow:hidden}
+  .progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+  .pg-title{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#6a7580;margin:0 0 14px}
+  .page{display:none}.page.active{display:block}
+  .q{margin:0 0 22px;padding-bottom:18px;border-bottom:1px solid #eef1f4}
+  .q:last-child{border-bottom:0}
+  .q label.t,.q .t{display:block;font-weight:600;font-size:15px;margin-bottom:8px}
+  .q .req{color:var(--err);margin-left:3px}
+  .q .hint{font-size:12.5px;color:#7a838c;margin:-4px 0 8px}
+  input[type=text],input[type=number]{width:100%;max-width:420px;padding:10px 12px;border:1px solid #b9c2cb;border-radius:4px;font-size:15px;background:#fafbfc}
+  input:focus{outline:2px solid var(--accent);outline-offset:0;background:#fff}
+  .opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:4px;margin-bottom:6px;cursor:pointer;font-size:15px;background:#fafbfc}
+  .opt:hover{border-color:var(--accent)}
+  .opt input{width:18px;height:18px;accent-color:var(--blue);margin:0}
+  .opt.sel{border-color:var(--blue);background:#eaf2f9}
+  .fig{display:grid;grid-template-columns:repeat(9,1fr);gap:6px}
+  .fig label{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;border:2px solid #d0d7de;border-radius:6px;text-align:center;padding:6px 2px;cursor:pointer;font-weight:600;background:#fff;min-height:44px;-webkit-tap-highlight-color:transparent}
+  .fig label:hover{border-color:var(--accent)}
+  .fig img{display:block;width:100%;height:auto;max-height:170px;object-fit:contain;pointer-events:none;user-select:none}
+  .fig input{position:absolute;opacity:0;width:1px;height:1px}
+  .fig label:focus-within{outline:2px solid var(--accent)}
+  .fig label.sel{background:#eaf2f9;border-color:var(--blue);box-shadow:0 0 0 2px var(--blue) inset}
+  .fig label.sel span{background:var(--blue);color:#fff}
+  .fig span{display:inline-block;min-width:24px;padding:2px 6px;border-radius:10px;font-size:13px}
+  .fig.noimg label{padding:12px 0}
+  .queue{display:none;margin:0 0 12px;padding:8px 12px;border-radius:4px;font-size:13px;background:#fff8e1;color:#7a5b00;border:1px solid #f0d98c}
+  .q.bad{border-left:3px solid var(--err);padding-left:10px}
+  .msg{display:none;color:var(--err);font-size:12.5px;margin-top:4px}
+  .q.bad .msg{display:block}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin:18px -22px 0;padding:14px 22px;background:#f4f6f8;border-top:1px solid var(--line);border-radius:0 0 6px 6px}
+  button{font-size:15px;font-weight:600;border:0;border-radius:4px;padding:11px 22px;cursor:pointer}
+  .btn-p{background:var(--blue);color:#fff}.btn-p:hover{background:var(--blue-d)}
+  .btn-s{background:#fff;color:var(--blue);border:1px solid var(--blue)}
+  .btn-ok{background:var(--ok);color:#fff}
+  button:disabled{opacity:.55;cursor:wait}
+  .status{margin:14px 0 0;padding:12px 14px;border-radius:4px;font-size:14px;display:none}
+  .status.ok{display:block;background:#e6f4e7;color:#1b5e20}
+  .status.er{display:block;background:#fdecea;color:#8e2a1f}
+  footer{text-align:center;font-size:12px;color:#7a838c;padding:14px}
+  @media(max-width:600px){.fig:not(.noimg){grid-template-columns:repeat(3,1fr);gap:8px}.fig img{max-height:150px}}
+  @media(max-width:520px){.fig.noimg{grid-template-columns:repeat(5,1fr)}main{padding:10px}.card{padding:16px 16px 8px}.nav{margin:18px -16px 0;padding:12px 16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">A</div><span>Anket Formu</span></div>
+  <select aria-label="Dil seçin"><option>Türkçe</option></select>
+</header>
+<main>
+  <div class="card">
+    <h1>Yetişkinlerde Kilo ve Beden Büyüklüğü Algısının Antropometrik Ölçümler ve Vücut Kompozisyonu ile İlişkisi</h1>
+    <p class="desc">Bu form, yetişkinlerde kilo ve beden büyüklüğü algısını incelemek amacıyla veri toplar. Adınızı yazmanız gerekmez; tüm bilgiler gizli tutulacaktır. Boşlukları doldurarak ve kutucukları işaretleyerek cevaplayınız.</p>
+    <div class="queue" id="queue"></div>
+    <div class="progress"><i id="bar"></i></div>
+    <form id="f" novalidate>
+      <!-- Sayfa 1 -->
+      <section class="page active" data-title="1 / 5 · Katılım ve tanıtıcı bilgiler">
+        <p class="pg-title"></p>
+        <div class="q" data-name="Hasta no" data-type="text"><label class="t">Hasta no<span class="req">*</span></label><input type="text" name="Hasta no"><div class="msg">Bu alan zorunludur.</div></div>
+        <div class="q" data-name="Çalışmaya katılmayı kabul ediyor musunuz?" data-type="radio" data-opts="Evet|Hayır"></div>
+        <div class="q" data-name="Yaşınız" data-type="number" data-min="18" data-max="120"></div>
+        <div class="q" data-name="Cinsiyetiniz" data-type="radio" data-opts="Kadın|Erkek"></div>
+        <div class="q" data-name="Medeni durumunuz" data-type="radio" data-opts="Evli|Bekar"></div>
+        <div class="q" data-name="Eğitim durumunuz" data-type="radio" data-opts="İlkokul|Ortaokul|Lise|Üniversite"></div>
+      </section>
+      <!-- Sayfa 2 -->
+      <section class="page" data-title="2 / 5 · Kilo algısı">
+        <p class="pg-title"></p>
+        <div class="q" data-name="En son ne zaman tartıldınız veya kilonuz ölçüldü?" data-type="radio" data-opts="Son 30 gün içinde|31 gün–6 ay önce|6 ay ve daha uzun bir süre önce"></div>
+        <div class="q" data-name="Şu anda kaç kilogram olduğunuzu tahmin ediyorsunuz? (kg)" data-type="number" data-min="20" data-max="400"></div>
+        <div class="q" data-name="Şu anda kilonuzu nasıl değerlendirirsiniz?" data-type="radio" data-opts="Düşük kiloluyum|Normal kilodayım|Fazla kiloluyum|Şişmanım"></div>
+        <div class="q" data-name="Şu anda kilonuzla ilgili ne yapmak istersiniz?" data-type="radio" data-opts="Kilo vermek|Kilomu korumak|Kilo almak|Bu konuda bir hedefim yok"></div>
+      </section>
+      <!-- Sayfa 3 -->
+      <section class="page" data-title="3 / 5 · Beden görünümü">
+        <p class="pg-title"></p>
+        <div class="q" data-name="Bu figürlerden hangisi şu anki beden görünümünüze en yakın?" data-type="fig"></div>
+        <div class="q" data-name="Bu figürlerden hangisi sahip olmak istediğiniz beden görünümüne en yakın?" data-type="fig"></div>
+      </section>
+      <!-- Sayfa 4 -->
+      <section class="page" data-title="4 / 5 · Son 12 ay">
+        <p class="pg-title"></p>
+        <div class="q" data-name="Son 12 ayda kilo vermek için herhangi bir girişiminiz oldu mu?" data-type="radio" data-opts="Evet|Hayır|Hatırlamıyorum"></div>
+        <div class="q" data-name="Son 12 ayda kilonuzla ilgili bir sağlık profesyonelinden destek aldınız mı?" data-type="radio" data-opts="Evet|Hayır|Hatırlamıyorum"></div>
+      </section>
+      <!-- Sayfa 5 -->
+      <section class="page" data-title="5 / 5 · Antropometrik ölçümler ve vücut kompozisyonu">
+        <p class="pg-title"></p>
+        <div class="q" data-name="Boy (cm)" data-type="number" data-min="50" data-max="250" data-step="0.1"></div>
+        <div class="q" data-name="Ağırlık (kg)" data-type="number" data-min="10" data-max="400" data-step="0.1"></div>
+        <div class="q" data-name="BKI" data-type="number" data-min="5" data-max="100" data-step="0.1" data-hint="Boy ve ağırlık girildiğinde otomatik hesaplanır; isterseniz değiştirebilirsiniz."></div>
+        <div class="q" data-name="Bel çevresi" data-type="number" data-step="0.1" data-hint="cm"></div>
+        <div class="q" data-name="Kalça çevresi" data-type="number" data-step="0.1" data-hint="cm"></div>
+        <div class="q" data-name="Yağ oranı (%)" data-type="number" data-step="0.1"></div>
+        <div class="q" data-name="Bazal metabolizma hızı" data-type="number" data-step="1"></div>
+        <div class="q" data-name="Metabolik yaş" data-type="number" data-step="1"></div>
+        <div class="q" data-name="Su oranı" data-type="number" data-step="0.1"></div>
+        <div class="q" data-name="Kas kütlesi" data-type="number" data-step="0.1"></div>
+        <div class="q" data-name="Kemik kütlesi" data-type="number" data-step="0.1"></div>
+        <div class="q" data-name="Boyun çevresi (cm)" data-type="number" data-step="0.1"></div>
+        <div class="status" id="status"></div>
+      </section>
+      <div class="nav">
+        <button type="button" class="btn-s" id="back">‹ Geri</button>
+        <button type="button" class="btn-p" id="next">İleri ›</button>
+        <button type="submit" class="btn-ok" id="submit" style="display:none">Gönder</button>
+      </div>
+    </form>
+  </div>
+</main>
+<footer>Veriler gönderildiğinde araştırmacıya e-posta ile (CSV veri seti ekli) iletilir.</footer>
+
+<script>
+/* ====== AYARLAR ====== */
+const RECIPIENT = "senaselcuk71@gmail.com";
+const ENDPOINT  = "https://formsubmit.co/ajax/" + RECIPIENT;
+const SUBJECT   = "Anket verisi: Kilo ve Beden Algısı";
+const FIG_SRC   = n => `figures/${n}.png`;   // silüet görselleri: figures/1.png … figures/9.png
+const QUEUE_KEY = "kiloAnketKuyruk";
+/* ===================== */
+
+// Görsel yüklenemezse yalnızca numara göster
+function figFail(img){ const g=img.closest(".fig"); img.remove(); if(g && !g.querySelector("img")) g.classList.add("noimg"); }
+
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+let uid = 0;
+
+// Soruları üret
+$$(".q").forEach(q=>{
+  const name=q.dataset.name, type=q.dataset.type;
+  if(type==="text") return;
+  const id="q"+(++uid);
+  let h=`<div class="t">${name}<span class="req">*</span></div>`;
+  if(q.dataset.hint) h+=`<div class="hint">${q.dataset.hint}</div>`;
+  if(type==="radio"){
+    h+=q.dataset.opts.split("|").map(o=>`<label class="opt"><input type="radio" name="${name}" value="${o}"><span>${o}</span></label>`).join("");
+  }else if(type==="number"){
+    const a=[];["min","max","step"].forEach(k=>{if(q.dataset[k])a.push(`${k}="${q.dataset[k]}"`)});
+    h+=`<input type="number" inputmode="decimal" name="${name}" ${a.join(" ")||'step="any"'}>`;
+  }else if(type==="fig"){
+    h+=`<div class="hint">Figüre dokunarak seçiniz (1: en zayıf … 9: en iri).</div><div class="fig">`+
+       [1,2,3,4,5,6,7,8,9].map(n=>`<label><input type="radio" name="${name}" value="${n}"><img src="${FIG_SRC(n)}" alt="Figür ${n}" loading="lazy" onerror="figFail(this)"><span>${n}</span></label>`).join("")+`</div>`;
+  }
+  h+=`<div class="msg">Bu soru zorunludur.</div>`;
+  q.innerHTML=h;
+});
+
+// Seçili görünümü
+document.addEventListener("change",e=>{
+  if(e.target.type==="radio"){
+    $$(`input[name="${CSS.escape(e.target.name)}"]`).forEach(r=>r.parentElement.classList.toggle("sel",r.checked));
+  }
+});
+
+// Sayfalama
+const pages=$$(".page"); let cur=0;
+function show(i){
+  cur=i;
+  pages.forEach((p,k)=>p.classList.toggle("active",k===i));
+  $$(".pg-title").forEach((t,k)=>t.textContent=pages[k].dataset.title);
+  $("#back").style.visibility=i===0?"hidden":"visible";
+  $("#next").style.display=i===pages.length-1?"none":"";
+  $("#submit").style.display=i===pages.length-1?"":"none";
+  $("#bar").style.width=((i+1)/pages.length*100)+"%";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function valid(page){
+  let ok=true;
+  $$(".q",page).forEach(q=>{
+    const n=q.dataset.name; let v;
+    if(q.dataset.type==="text"||q.dataset.type==="number"){
+      const inp=$("input",q); v=inp.value.trim();
+      let good=v!=="" && inp.checkValidity();
+      q.classList.toggle("bad",!good);
+      if(!good)ok=false;
+    }else{
+      v=$(`input[name="${CSS.escape(n)}"]:checked`,q);
+      q.classList.toggle("bad",!v); if(!v)ok=false;
+    }
+  });
+  if(!ok){const b=$(".q.bad",page); if(b)b.scrollIntoView({behavior:"smooth",block:"center"});}
+  return ok;
+}
+$("#next").onclick=()=>{ if(valid(pages[cur])) show(cur+1); };
+$("#back").onclick=()=>show(cur-1);
+show(0);
+
+// BKİ otomatik
+function bmi(){
+  const h=parseFloat($('[name="Boy (cm)"]').value), w=parseFloat($('[name="Ağırlık (kg)"]').value), b=$('[name="BKI"]');
+  if(h>0&&w>0&&!b.dataset.manual) b.value=(w/Math.pow(h/100,2)).toFixed(1);
+}
+$('[name="Boy (cm)"]').addEventListener("input",bmi);
+$('[name="Ağırlık (kg)"]').addEventListener("input",bmi);
+$('[name="BKI"]').addEventListener("input",e=>e.target.dataset.manual="1");
+
+// Veri seti (CSV) oluştur
+function collect(){
+  const rec={"Gönderim zamanı":new Date().toLocaleString("tr-TR")};
+  $$(".q").forEach(q=>{
+    const n=q.dataset.name;
+    if(q.dataset.type==="text"||q.dataset.type==="number") rec[n]=$("input",q).value.trim();
+    else{const c=$(`input[name="${CSS.escape(n)}"]:checked`,q); rec[n]=c?c.value:"";}
+  });
+  return rec;
+}
+function toCSV(rec){
+  const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  return "﻿"+Object.keys(rec).map(esc).join(";")+"\r\n"+Object.values(rec).map(esc).join(";")+"\r\n";
+}
+function download(name,text){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([text],{type:"text/csv;charset=utf-8"}));
+  a.download=name; a.click();
+}
+
+// Tek kaydı FormSubmit'e gönder
+async function sendRecord(rec){
+  const csv=toCSV(rec);
+  const fname=`anket_${(rec["Hasta no"]||"kayit").replace(/[^\w-]/g,"_")}.csv`;
+  const fd=new FormData();
+  fd.append("_subject",SUBJECT+" – Hasta no: "+rec["Hasta no"]);
+  fd.append("_captcha","false");
+  fd.append("_template","table");
+  Object.entries(rec).forEach(([k,v])=>fd.append(k,v));
+  fd.append("attachment",new File([csv],fname,{type:"text/csv"}));
+  const r=await fetch(ENDPOINT,{method:"POST",body:fd,headers:{Accept:"application/json"}});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok||j.success==="false"||j.success===false) throw new Error(j.message||("HTTP "+r.status));
+  return j;
+}
+
+// Çevrimdışı kuyruk (localStorage)
+function loadQ(){ try{ return JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); }catch(e){ return []; } }
+function saveQ(q){ try{ localStorage.setItem(QUEUE_KEY,JSON.stringify(q)); return true; }catch(e){ return false; } }
+function showQ(){
+  const n=loadQ().length, el=$("#queue");
+  el.style.display=n?"block":"none";
+  el.textContent=n?`Bu cihazda gönderilmeyi bekleyen ${n} kayıt var. İnternet bağlantısı gelince otomatik gönderilecek.`:"";
+}
+let flushing=false;
+async function flushQ(){
+  if(flushing||!navigator.onLine) return;
+  flushing=true;
+  try{
+    let q=loadQ();
+    while(q.length){
+      try{ await sendRecord(q[0]); }catch(e){ break; }   // hâlâ gönderilemiyorsa sonra tekrar dene
+      q=loadQ(); q.shift(); saveQ(q); showQ();
+    }
+  }finally{ flushing=false; showQ(); }
+}
+window.addEventListener("online",flushQ);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) flushQ(); });
+setInterval(flushQ,60000);
+showQ(); flushQ();
+
+function resetForm(){
+  $("#f").reset(); $$(".opt,.fig label").forEach(l=>l.classList.remove("sel"));
+  delete $('[name="BKI"]').dataset.manual;
+  setTimeout(()=>show(0),4000);
+}
+
+// Gönder
+$("#f").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!valid(pages[cur])) return;
+  if(!pages.every(p=>{const ok=valid(p); if(!ok) show(pages.indexOf(p)); return ok;})) return;
+  const rec=collect();
+  const st=$("#status"), btn=$("#submit");
+  btn.disabled=true; btn.textContent="Gönderiliyor…"; st.className="status";
+  try{
+    if(!navigator.onLine) throw new Error("çevrimdışı");
+    await sendRecord(rec);
+    st.className="status ok";
+    st.textContent="Veriler gönderildi. Teşekkür ederiz.";
+    resetForm();
+  }catch(err){
+    const q=loadQ(); q.push(rec);
+    if(saveQ(q)){
+      st.className="status ok";
+      st.textContent="İnternet bağlantısı yok veya sunucuya ulaşılamadı. Kayıt bu cihazda kuyruğa alındı; bağlantı gelince otomatik gönderilecek. Sayfayı kapatabilirsiniz, sonra yeniden açıldığında da gönderilir.";
+      resetForm();
+    }else{
+      st.className="status er";
+      st.textContent="Gönderilemedi ("+err.message+") ve cihaza kaydedilemedi. Kayıt CSV olarak indirildi; lütfen dosyayı e-postayla iletin.";
+      download(`anket_${(rec["Hasta no"]||"kayit").replace(/[^\w-]/g,"_")}.csv`,toCSV(rec));
+    }
+    showQ();
+  }finally{
+    btn.disabled=false; btn.textContent="Gönder";
+  }
+});
+</script>
+</body>
+</html>
