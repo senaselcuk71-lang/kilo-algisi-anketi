@@ -134,9 +134,10 @@
 const RECIPIENT = "c56e2fc23971778ee205eefeaff64696";   // FormSubmit rastgele alias (e-posta adresi gizli)
 const ENDPOINT  = "https://formsubmit.co/ajax/" + RECIPIENT;
 const SUBJECT   = "Anket verisi: Kilo ve Beden Algısı";
-// silüet görselleri: figures/kadin/1.jpg … 9.jpg ve figures/erkek/1.jpg … 9.jpg (cinsiyet cevabına göre)
+// Stunkard Figure Rating Scale (Stunkard, Sørensen & Schulsinger, 1983; kaynak: PhenX Toolkit, protokol 020401)
+// figures/kadin/1.png … 9.png ve figures/erkek/1.png … 9.png (cinsiyet cevabına göre)
 let figSet = "kadin";
-const FIG_SRC   = n => `figures/${figSet}/${n}.jpg`;
+const FIG_SRC   = n => `figures/${figSet}/${n}.png`;
 const QUEUE_KEY = "kiloAnketKuyruk";
 /* ===================== */
 
@@ -161,7 +162,8 @@ $$(".q").forEach(q=>{
     h+=`<input type="number" inputmode="decimal" name="${name}" ${a.join(" ")||'step="any"'}>`;
   }else if(type==="fig"){
     h+=`<div class="hint">Figüre dokunarak seçiniz (1: en zayıf … 9: en iri).</div><div class="fig">`+
-       [1,2,3,4,5,6,7,8,9].map(n=>`<label><input type="radio" name="${name}" value="${n}"><img src="${FIG_SRC(n)}" alt="Figür ${n}" loading="lazy" onerror="figFail(this)"><span>${n}</span></label>`).join("")+`</div>`;
+       [1,2,3,4,5,6,7,8,9].map(n=>`<label><input type="radio" name="${name}" value="${n}"><img src="${FIG_SRC(n)}" alt="Figür ${n}" loading="lazy" onerror="figFail(this)"><span>${n}</span></label>`).join("")+`</div>`+
+       `<div class="hint" style="margin:6px 0 0;font-size:11px">Figürler: Stunkard, Sørensen ve Schulsinger (1983).</div>`;
   }
   h+=`<div class="msg">Bu soru zorunludur.</div>`;
   q.innerHTML=h;
