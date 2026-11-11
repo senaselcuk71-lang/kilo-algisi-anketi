@@ -108,15 +108,15 @@
         <div class="q" data-name="Boy (cm)" data-type="number" data-min="50" data-max="250" data-step="0.1"></div>
         <div class="q" data-name="Ağırlık (kg)" data-type="number" data-min="10" data-max="400" data-step="0.1"></div>
         <div class="q" data-name="BKI" data-type="number" data-min="5" data-max="100" data-step="0.1" data-hint="Boy ve ağırlık girildiğinde otomatik hesaplanır; isterseniz değiştirebilirsiniz."></div>
-        <div class="q" data-name="Bel çevresi" data-type="number" data-step="0.1" data-hint="cm"></div>
-        <div class="q" data-name="Kalça çevresi" data-type="number" data-step="0.1" data-hint="cm"></div>
-        <div class="q" data-name="Yağ oranı (%)" data-type="number" data-step="0.1"></div>
-        <div class="q" data-name="Bazal metabolizma hızı" data-type="number" data-step="1"></div>
-        <div class="q" data-name="Metabolik yaş" data-type="number" data-step="1"></div>
-        <div class="q" data-name="Su oranı" data-type="number" data-step="0.1"></div>
-        <div class="q" data-name="Kas kütlesi" data-type="number" data-step="0.1"></div>
-        <div class="q" data-name="Kemik kütlesi" data-type="number" data-step="0.1"></div>
-        <div class="q" data-name="Boyun çevresi (cm)" data-type="number" data-step="0.1"></div>
+        <div class="q" data-name="Bel çevresi" data-type="number" data-min="40" data-max="200" data-step="0.1" data-hint="cm · 40–200"></div>
+        <div class="q" data-name="Kalça çevresi" data-type="number" data-min="50" data-max="220" data-step="0.1" data-hint="cm · 50–220"></div>
+        <div class="q" data-name="Yağ oranı (%)" data-type="number" data-min="3" data-max="75" data-step="0.1" data-hint="% · 3–75"></div>
+        <div class="q" data-name="Bazal metabolizma hızı" data-type="number" data-min="600" data-max="5000" data-step="1" data-hint="kcal · 600–5000"></div>
+        <div class="q" data-name="Metabolik yaş" data-type="number" data-min="12" data-max="100" data-step="1" data-hint="yıl · 12–100"></div>
+        <div class="q" data-name="Su oranı" data-type="number" data-min="20" data-max="80" data-step="0.1" data-hint="% · 20–80"></div>
+        <div class="q" data-name="Kas kütlesi" data-type="number" data-min="10" data-max="150" data-step="0.1" data-hint="kg · 10–150"></div>
+        <div class="q" data-name="Kemik kütlesi" data-type="number" data-min="0.5" data-max="10" data-step="0.1" data-hint="kg · 0,5–10"></div>
+        <div class="q" data-name="Boyun çevresi (cm)" data-type="number" data-min="20" data-max="70" data-step="0.1" data-hint="cm · 20–70"></div>
         <div class="status" id="status"></div>
       </section>
       <div class="nav">
@@ -200,6 +200,9 @@ function valid(page){
       const inp=$("input",q); v=inp.value.trim();
       let good=v!=="" && inp.checkValidity();
       q.classList.toggle("bad",!good);
+      const m=$(".msg",q);
+      if(m) m.textContent = v==="" ? (q.dataset.type==="text"?"Bu alan zorunludur.":"Bu soru zorunludur.")
+        : (inp.min||inp.max) ? `Lütfen geçerli bir değer girin (${inp.min||"…"}–${inp.max||"…"}).` : "Lütfen geçerli bir değer girin.";
       if(!good)ok=false;
     }else{
       v=$(`input[name="${CSS.escape(n)}"]:checked`,q);
